@@ -33,8 +33,5 @@
   },
   "dependencies": {
     "debug": "^2.6.3"
-  },
-  "peerDependencies": {
-    "engine.io-client": "2"
   }
 }
