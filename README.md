@@ -1,5 +1,7 @@
 # socket.io-sticky-headers
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/hyperlink/socket.io-sticky-headers.svg)](https://greenkeeper.io/)
+
 Use custom header to maintain sticky sessions with socket.io
 
 ## Problem
