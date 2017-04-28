@@ -3,13 +3,16 @@
 const debug = require('debug')('engine.io-sticky-headers')
 
 let initialized = false
+let socket = null
 
-function initialize (XHR, stickyHeader) {
+function initialize (XHR, stickyHeader, requestAsQueryParam) {
   if (initialized) return
 
   if (stickyHeader == null) {
     stickyHeader = 'Session-Id'
   }
+
+  const queryParamKey = stickyHeader.replace(new RegExp('-', 'g'), '')
 
   if (XHR == null || typeof XHR !== 'function') {
     throw new Error('Please provide XHR function constructor ie require("engine.io-client/lib/transports/polling-xhr"')
@@ -44,16 +47,25 @@ function initialize (XHR, stickyHeader) {
     return function updateSticky () {
       let newStickyValue = this.xhr.getResponseHeader(stickyHeader)
       if (newStickyValue != null) {
-        debug('setting header %s to %s', stickyHeader, newStickyValue)
-        if (xhr.extraHeaders == null) {
-          xhr.extraHeaders = {}
+        if (requestAsQueryParam && socket) {
+          socket.io.engine.transport.query[queryParamKey] = socket.io.engine.query[queryParamKey] = newStickyValue
+        } else {
+          debug('setting header %s to %s', stickyHeader, newStickyValue)
+          if (xhr.extraHeaders == null) {
+            xhr.extraHeaders = {}
+          }
+          xhr.extraHeaders[stickyHeader] = newStickyValue
         }
-        xhr.extraHeaders[stickyHeader] = newStickyValue
       }
     }
   }
 
   initialized = true
+}
+
+// reference to socket is needed if sending a query param
+initialize.setSocket = function (s) {
+  socket = s
 }
 
 module.exports = initialize
