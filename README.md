@@ -23,11 +23,27 @@ npm install socket.io-sticky-headers --save
 ### Socket.io
 
 ```javascript
-require('socket.io-sticky-headers')(require('socket.io-client/node_modules/engine.io-client/lib/transports/polling-xhr'), 'My-Session-Id');
+require('socket.io-sticky-headers')(require('socket.io-client/node_modules/engine.io-client/lib/transports/polling-xhr'), 'My-Session-Id')
 ```
 
 ### Engine.io
 
 ```javascript
-require('socket.io-sticky-headers')(require('engine.io-client/lib/transports/polling-xhr'), 'My-Session-Id');
+require('socket.io-sticky-headers')(require('engine.io-client/lib/transports/polling-xhr'), 'My-Session-Id')
+```
+
+Pass `true` as the third argument if you wish to send the header as query param instead (which maybe more desirable for CORS reasons). You will need to provide a socket as shown below:
+
+```javascript
+const stickyHeader = require('socket.io-sticky-headers')
+stickyHeader(require('engine.io-client/lib/transports/polling-xhr'), 'My-Session-Id', true)
+
+var io = require('socket.io-client')
+
+var socket = io('http://localhost:3000', {
+  reconnection: false,
+  'force new connection': true
+})
+
+stickyHeader.setSocket(socket)
 ```
